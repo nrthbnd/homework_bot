@@ -1,5 +1,4 @@
 import logging
-from logging.handlers import RotatingFileHandler
 
 import os
 import sys
@@ -38,8 +37,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-handler = RotatingFileHandler(
-    'my_logger.log', maxBytes=50000000, backupCount=5, encoding='utf-8')
+handler = logging.StreamHandler(sys.stdout)
 formatter = logging.Formatter(
     '%(asctime)s - %(levelname)s - %(funcName)s - %(message)s')
 handler.setFormatter(formatter)
@@ -65,11 +63,20 @@ def get_api_answer(timestamp):
     """Делает запрос к эндпоинту API-сервиса. Передает временную метку."""
     # GET-запрос к эндпоинту
     # Ответ возвращается в формате json и приводится к типу данных Python
-    response = requests.get(
-        url=ENDPOINT,
-        headers=HEADERS,
-        params={'from_date': timestamp}
-    )
+    try:
+        response = requests.get(
+            url=ENDPOINT,
+            headers=HEADERS,
+            params={'from_date': timestamp}
+        )
+
+    except Exception as error:
+        error_text = f'Ошибка при запросе к API: {error}.'
+        logger.error(error_text)
+        raise ValueError(error_text)
+
+    finally:
+        logger.info('Функция get_api_answer выполнена.')
     if response.status_code != HTTPStatus.OK:
         error_text = (
             'Ошибочный ответ от сервиса '
@@ -77,18 +84,8 @@ def get_api_answer(timestamp):
         )
         logger.error(error_text)
         raise ValueError(error_text)
-
-    logger.error(
-        f'Сервер возвращает ответ. Статус код: {response.status_code}.'
-    )
-
-    try:
-        return response.json()
-
-    except Exception as error:
-        error_text = f'Ошибка при запросе к API: {error}.'
-        logger.error(error_text)
-        raise Exception(error_text)
+    logger.debug('Сервер возвращает ответ. Статус код: 200')
+    return response.json()
 
 
 def check_response(response):
