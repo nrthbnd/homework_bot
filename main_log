@@ -1,10 +1,10 @@
-2023-03-09 19:24:22,542 - DEBUG - Проверка доступности переменных окружения.
-2023-03-09 19:24:22,543 - INFO - Бот для проверки домашней работы запущен.
-2023-03-09 19:24:22,545 - DEBUG - Starting new HTTPS connection (1): practicum.yandex.ru:443
-2023-03-09 19:24:22,791 - DEBUG - https://practicum.yandex.ru:443 "GET /api/user_api/homework_statuses/?from_date=1675879062 HTTP/1.1" 200 570
-2023-03-09 19:24:22,797 - ERROR - Сервер возвращает ответ. Статус код: 200.
-2023-03-09 19:24:22,805 - DEBUG - Ответ API проверен, все в порядке.
-2023-03-09 19:24:22,806 - DEBUG - Entering: send_message
-2023-03-09 19:24:23,032 - DEBUG - {'entities': [], 'delete_chat_photo': False, 'photo': [], 'new_chat_photo': [], 'caption_entities': [], 'group_chat_created': False, 'text': 'Изменился статус проверки работы "Anastasiia-Soloshenkova__hw05_final.zip". Работа проверена: ревьюеру всё понравилось. Ура!', 'chat': {'type': 'private', 'id': 132613408, 'username': 'nrthbnd', 'first_name': 'Nastya'}, 'supergroup_chat_created': False, 'new_chat_members': [], 'channel_chat_created': False, 'date': 1678379047, 'message_id': 12, 'from': {'is_bot': True, 'username': 'nrthbnd_check_hw_bot', 'first_name': 'check_hw_bot', 'id': 5994003966}}
-2023-03-09 19:24:23,033 - DEBUG - Exiting: send_message
-2023-03-09 19:24:23,033 - DEBUG - В чат отправлено сообщение.
+2023-03-10 23:21:32,189 - DEBUG - Проверка доступности переменных окружения.
+2023-03-10 23:21:32,192 - DEBUG - Starting new HTTPS connection (1): practicum.yandex.ru:443
+2023-03-10 23:21:34,569 - DEBUG - https://practicum.yandex.ru:443 "GET /api/user_api/homework_statuses/?from_date=1678479692 HTTP/1.1" 200 42
+2023-03-10 23:21:34,577 - ERROR - Сервер возвращает ответ. Статус код: 200.
+2023-03-10 23:21:34,579 - DEBUG - Ответ API проверен, все в порядке.
+2023-03-10 23:21:34,580 - DEBUG - Entering: send_message
+2023-03-10 23:21:36,720 - DEBUG - {'photo': [], 'chat': {'username': 'nrthbnd', 'type': 'private', 'id': 132613408, 'first_name': 'Nastya'}, 'text': 'Домашняя работа не отправлялась на проверку.', 'channel_chat_created': False, 'entities': [], 'supergroup_chat_created': False, 'message_id': 87, 'group_chat_created': False, 'new_chat_members': [], 'new_chat_photo': [], 'delete_chat_photo': False, 'caption_entities': [], 'date': 1678479680, 'from': {'username': 'nrthbnd_check_hw_bot', 'id': 5994003966, 'is_bot': True, 'first_name': 'check_hw_bot'}}
+2023-03-10 23:21:36,720 - DEBUG - Exiting: send_message
+2023-03-10 23:21:36,720 - DEBUG - В чат отправлено сообщение.
+2023-03-10 23:21:36,721 - DEBUG - Статус домашней работы обновлен.
