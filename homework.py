@@ -8,6 +8,8 @@ from http import HTTPStatus
 import requests
 import telegram
 from dotenv import load_dotenv
+from requests import Response
+from pprint import pprint
 
 from exceptions import NoHomeworkError
 
@@ -50,16 +52,18 @@ def check_tokens() -> None:
     return all((PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID))
 
 
-def send_message(bot, message):
+def send_message(bot: telegram.bot.Bot, message: str) -> bool:
     """Отправляет сообщение в Telegram чат."""
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.debug('В чат отправлено сообщение.')
+        return True
     except Exception as error:
         logger.error(f'Не получилось отправить сообщение: {error}')
+        return False
 
 
-def get_api_answer(timestamp):
+def get_api_answer(timestamp) -> Response:
     """Делает запрос к эндпоинту API-сервиса. Передает временную метку."""
     # GET-запрос к эндпоинту
     # Ответ возвращается в формате json и приводится к типу данных Python
@@ -88,7 +92,7 @@ def get_api_answer(timestamp):
     return response.json()
 
 
-def check_response(response):
+def check_response(response: dict) -> None:
     """Проверяет ответ API на соответствие документации."""
     if not isinstance(response, dict):
         error_text = 'На проверку поступил не dict.'
@@ -110,7 +114,7 @@ def check_response(response):
     return response
 
 
-def parse_status(homework):
+def parse_status(homework: dict) -> str:
     """Извлекает из информации о конкретной домашней работе её статус."""
     homework_name = homework.get('homework_name')
     status = homework.get('status')
@@ -130,38 +134,43 @@ def parse_status(homework):
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
-def main():
+def main() -> None:
     """Основная логика работы бота."""
     if not check_tokens():
         logger.critical('Не передан токен для доступа к боту.')
         sys.exit('Отсутствуют переменные окружения.')
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    logger.debug('Бот для проверки домашней работы запущен.')
     timestamp = int(time.time())
     message_old = ''
     prev_message = ''
-    # logger.info('Бот для проверки домашней работы запущен.')
 
     while True:
         try:
             response = get_api_answer(timestamp)
             homework = check_response(response)
-            if len(homework.get('homeworks')) == 0:
+            pprint(homework)
+            if not homework.get('homeworks'):
                 message = 'Домашняя работа не отправлялась на проверку.'
+                logger.debug(
+                    'Список пуст: '
+                    'домашняя работа не отправлялась на проверку.')
             else:
                 message = parse_status(homework.get('homeworks')[0])
             if message_old != message:
-                send_message(bot, message)
-                message_old = message
-                timestamp = response.get('current_date')
-                logger.debug('Статус домашней работы обновлен.')
+                if send_message(bot, message):
+                    message_old = message
+                    timestamp = response.get('current_date', int(time.time()))
+                    logger.debug('Статус домашней работы обновлен.')
 
         except Exception as error:
             message = f'Сбой в работе программы: {error}.'
             logger.error(message)
             if prev_message != message:
-                send_message(bot, message)
-                prev_message = message
+                if send_message(bot, message):
+                    prev_message = message
+
         finally:
             time.sleep(RETRY_PERIOD)
 
